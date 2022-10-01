@@ -9,3 +9,17 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id       Int       @id @default(autoincrement())
+  email    String    @unique
+  name     String?
+  projects Project[]
+}
+
+model Project {
+  id          Int    @id @default(autoincrement())
+  projectName String
+  owner       User   @relation(fields: [ownerId], references: [id])
+  ownerId     Int
+}
