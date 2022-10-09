@@ -1,0 +1,27 @@
+name: Build
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+
+    # Migrate
+    
+    - name: Build
+      run: |
+        yarn
+        yarn run build
+
+    # Create docker image
+
+    # Deploy K8s
