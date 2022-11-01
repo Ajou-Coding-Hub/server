@@ -1,0 +1,8 @@
+type Guide {
+    id: ID!
+    name: String!
+}
+
+type Query {
+    guides: [Guide!]!
+}

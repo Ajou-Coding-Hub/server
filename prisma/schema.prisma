@@ -11,12 +11,12 @@ datasource db {
 }
 
 model User {
-  id           Int            @id @default(autoincrement())
-  email        String         @unique
-  name         String?
-  Project      Project[]
-  ownerGuide   Guide[]        @relation(name: "ownerGuide")
-  solvingGuide GuideProblem[]
+  id                  Int            @id @default(autoincrement())
+  email               String         @unique
+  name                String?
+  Project             Project[]
+  ownerGuide          Guide[]        @relation(name: "ownerGuide")
+  solvingGuideProblem GuideProblem[]
 }
 
 model Project {
@@ -43,7 +43,6 @@ model GuideProblem {
   Guide   Guide @relation(fields: [guideId], references: [id])
   guideId Int
 
-  isSolved Boolean
-  user     User?   @relation(fields: [userId], references: [id])
-  userId   Int?
+  isSolved    Boolean
+  solvingUser User[]
 }

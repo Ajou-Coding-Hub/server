@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
-import { GuideController } from './guide.controller';
+import { PrismaModule } from '../prisma/prisma.module';
+import { GuideResolvers } from './guide.resolvers';
 import { GuideService } from './guide.service';
 
 @Module({
-  controllers: [GuideController],
-  providers: [GuideService]
+  providers: [GuideResolvers, GuideService],
+  imports: [PrismaModule],
 })
 export class GuideModule {}
