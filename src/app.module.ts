@@ -1,20 +1,26 @@
 import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { VscodeGateway } from './vscode/vscode.gateway';
-import { GuideModule } from './guide/guide.module';
-import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver } from '@nestjs/apollo';
+import { GuideResolvers } from './guide/guide.resolvers';
+import { GuideProblemRelationsResolver } from 'prisma/generated/type-graphql';
+import { TypeGraphQLModule } from 'typegraphql-nestjs';
+import path from 'path';
+import { PrismaClient } from '@prisma/client';
+
+interface Context {
+  prisma: PrismaClient;
+}
 
 @Module({
   imports: [
-    GraphQLModule.forRoot({
-      driver: ApolloDriver,
-      typePaths: ['./**/*.graphql'],
-      installSubscriptionHandlers: true,
+    TypeGraphQLModule.forRoot({
+      path: '/graphql',
+      emitSchemaFile: path.resolve(__dirname, './generated-schema.graphql'),
+      validate: false,
+      context: (): Context => ({ prisma: new PrismaClient() }),
     }),
     AuthModule,
-    GuideModule,
   ],
-  providers: [VscodeGateway],
+  providers: [VscodeGateway, GuideResolvers, GuideProblemRelationsResolver],
 })
 export class AppModule {}

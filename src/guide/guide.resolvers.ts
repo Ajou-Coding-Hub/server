@@ -7,7 +7,7 @@ export class GuideResolvers {
   constructor(private readonly guideService: GuideService) {}
 
   @Query('guides')
-  async guides(): Promise<Guide[]> {
+  async posts(): Promise<Guide[]> {
     return this.guideService.findAll();
   }
 }
