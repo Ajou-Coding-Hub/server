@@ -12,6 +12,8 @@ RUN yarn install
 
 COPY . .
 
+RUN yarn run prisma:generate
+
 RUN yarn run build
 
 FROM node:16
