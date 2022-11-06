@@ -88,7 +88,7 @@ jobs:
       with:
         push: true
         context: .
-        file: docker/Dockerfile
+        file: infra/docker/Dockerfile
         tags: |
           registry.container-registry.svc.cluster.local:5000/server:$IMAGE_TAG
         cache-from: type=registry,ref=registry.container-registry.svc.cluster.local:5000/server:buildcache
