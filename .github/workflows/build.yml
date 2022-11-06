@@ -87,7 +87,7 @@ jobs:
         context: .
         file: docker/Dockerfile
         tags: |
-          registry.container-registry.svc.cluster.local:5000/client:latest
+          registry.container-registry.svc.cluster.local:5000/server:latest
         cache-from: type=registry,ref=registry.container-registry.svc.cluster.local:5000/server:buildcache
         cache-to: type=registry,ref=registry.container-registry.svc.cluster.local:5000/server:buildcache,mode=max
 
