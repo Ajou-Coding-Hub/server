@@ -7,7 +7,6 @@ on:
 jobs:
   build:
     runs-on: k8s
-    container: "docker:dind"
 
     steps:
     - id: slack_message
@@ -95,7 +94,6 @@ jobs:
 
   deploy:
     runs-on: k8s
-    container: "alpine/helm:latest"
 
     steps:
       - uses: actions/checkout@v3
