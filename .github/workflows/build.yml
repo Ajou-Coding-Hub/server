@@ -7,6 +7,7 @@ on:
 jobs:
   build:
     runs-on: k8s
+    container: "alpine/helm:latest"
 
     steps:
     - id: slack_message
