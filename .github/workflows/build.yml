@@ -99,7 +99,7 @@ jobs:
     # Deploy K8s
     - name: Deploy
       run: |
-        helm upgrade -f ./infra/helm/logic-server/values.yaml --set tag=${{ steps.slug.outputs.sha7 }} logic-server ./infra/helm/logic-server --namespace ajou-coding-hub --install
+        helm upgrade logic-server ./infra/helm/logic-server --set tag=${{ steps.slug.outputs.sha7 }} --namespace ajou-coding-hub --install
 
 
 
