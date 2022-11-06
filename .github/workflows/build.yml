@@ -8,6 +8,9 @@ jobs:
   build:
     runs-on: k8s
 
+    env:
+      IMAGE_TAG: ${{ github.sha }}
+
     steps:
     - id: slack_message
       uses: slackapi/slack-github-action@v1.23.0
@@ -87,19 +90,14 @@ jobs:
         context: .
         file: docker/Dockerfile
         tags: |
-          registry.container-registry.svc.cluster.local:5000/server:latest
+          registry.container-registry.svc.cluster.local:5000/server:$IMAGE_TAG
         cache-from: type=registry,ref=registry.container-registry.svc.cluster.local:5000/server:buildcache
         cache-to: type=registry,ref=registry.container-registry.svc.cluster.local:5000/server:buildcache,mode=max
 
+    # Deploy K8s
+    - name: Deploy
+      run: |
+        helm upgrade -f ./infra/helm/logic-server/values.yaml --set tag=$IMAGE_TAG logic-server ./infra/helm/logic-server --namespace ajou-coding-hub --install
 
-  deploy:
-    runs-on: k8s
 
-    steps:
-      - uses: actions/checkout@v3
-
-        # Deploy K8s
-      - name: Deploy
-        run: |
-          helm upgrade -f ./infra/helm/logic-server/values.yaml logic-server ./infra/helm/logic-server --namespace ajou-coding-hub --install
 
