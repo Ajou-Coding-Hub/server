@@ -1,46 +1,52 @@
-import { Injectable } from '@nestjs/common';
-import prisma from 'src/db/db';
+import { HttpService } from '@nestjs/axios';
+import { ForbiddenException, Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { UserService } from 'src/user/user.service';
 
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+export interface LoginResponse {
+  token: string;
+  profile: {
+    email: string;
+    name: string;
+    hd: string;
+    picture: string;
+  };
+}
 
 @Injectable()
 export class AuthService {
-  googleLogin(req) {
-    console.log('googleLogin', req.user);
-    if (!req.user) {
-      return 'No user from google';
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly httpService: HttpService,
+    private readonly userService: UserService,
+  ) {}
+
+  async login(accessToken: string): Promise<LoginResponse> {
+    const { email, name, hd, picture } = (await this.httpService.get(
+      'https://www.googleapis.com/oauth2/v3/tokeninfo',
+      {
+        params: {
+          id_token: accessToken,
+        },
+      },
+    )) as any;
+    if (!hd.includes('ajou.ac.kr')) throw ForbiddenException;
+
+    try {
+      const user = await this.userService.findOneByEmail(email);
+      return {
+        token: this.jwtService.sign({ userId: user.id }),
+        profile: { email, name, hd, picture },
+      };
+    } catch (e) {
+      const user = await this.userService.create({
+        email,
+        name,
+      });
+      return {
+        token: this.jwtService.sign({ userId: user.id }),
+        profile: { email, name, hd, picture },
+      };
     }
-
-    return {
-      user: req.user,
-    };
-  }
-
-  async findAll() {
-    const users = await prisma.user.findMany();
-    return users;
-  }
-
-  async findOne(id: number) {
-    const user = await prisma.user.findUnique({
-      where: { id },
-    });
-    return user;
-  }
-
-  async findOneByEmail(email: string) {
-    const user = await prisma.user.findUnique({
-      where: { email },
-    });
-    return user;
-  }
-
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
   }
 }
