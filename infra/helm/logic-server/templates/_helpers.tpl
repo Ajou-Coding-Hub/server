@@ -50,13 +50,3 @@ app.kubernetes.io/name: {{ include "logic-server.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
-{{/*
-Create the name of the service account to use
-*/}}
-{{- define "logic-server.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "logic-server.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
-{{- end }}

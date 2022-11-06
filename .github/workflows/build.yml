@@ -7,7 +7,7 @@ on:
 jobs:
   build:
     runs-on: k8s
-    container: "alpine/helm:latest"
+    container: "docker"
 
     steps:
     - id: slack_message
@@ -58,10 +58,6 @@ jobs:
         
     - uses: actions/checkout@v3
 
-      # Deploy K8s
-    - name: Deploy
-      run: |
-        helm upgrade -f ./infra/helm/logic-server/values.yaml logic-server ./infra/helm/logic-server --namespace ajou-coding-hub --install
 
     - name: Set up Docker Context for Buildx
       id: buildx-context
@@ -77,16 +73,12 @@ jobs:
         config-inline: |
           [registry."registry.container-registry.svc.cluster.local:5000"]
             http = true
-            insecure = true
 
-
-
+    # Migrate
     - uses: actions/setup-node@v3
       with:
         node-version: 16
 
-    # Migrate
-    
 
     # Create & Push docker image
     - name: Build and push Docker Image
@@ -99,4 +91,17 @@ jobs:
           registry.container-registry.svc.cluster.local:5000/client:latest
         cache-from: type=registry,ref=registry.container-registry.svc.cluster.local:5000/server:buildcache
         cache-to: type=registry,ref=registry.container-registry.svc.cluster.local:5000/server:buildcache,mode=max
+
+
+  deploy:
+    runs-on: k8s
+    container: "alpine/helm:latest"
+
+    steps:
+      - uses: actions/checkout@v3
+
+        # Deploy K8s
+      - name: Deploy
+        run: |
+          helm upgrade -f ./infra/helm/logic-server/values.yaml logic-server ./infra/helm/logic-server --namespace ajou-coding-hub --install
 
