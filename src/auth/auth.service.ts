@@ -1,6 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { map, firstValueFrom } from 'rxjs';
 import { UserService } from 'src/user/user.service';
 
 export interface LoginResponse {
@@ -22,16 +23,20 @@ export class AuthService {
   ) {}
 
   async login(accessToken: string): Promise<LoginResponse> {
-    const { email, name, hd, picture } = (await this.httpService.get(
-      'https://www.googleapis.com/oauth2/v3/tokeninfo',
-      {
-        params: {
-          id_token: accessToken,
-        },
-      },
-    )) as any;
+    const { email, name, hd, picture } = await firstValueFrom(
+      this.httpService
+        .get('https://www.googleapis.com/oauth2/v3/tokeninfo', {
+          params: {
+            id_token: accessToken,
+          },
+        })
+        .pipe(
+          map(async (response) => {
+            return response.data;
+          }),
+        ),
+    );
     if (!hd.includes('ajou.ac.kr')) throw ForbiddenException;
-
     try {
       const user = await this.userService.findOneByEmail(email);
       return {
