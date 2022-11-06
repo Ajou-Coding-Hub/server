@@ -61,7 +61,7 @@ jobs:
       # Deploy K8s
     - name: Deploy
       run: |
-        helm upgrade -f ./infra/helm/logic-server/values.yaml logic-server ./infra/helm/logic-server
+        helm upgrade -f ./infra/helm/logic-server/values.yaml logic-server ./infra/helm/logic-server --namespace ajou-coding-hub --install
 
     - name: Set up Docker Context for Buildx
       id: buildx-context
