@@ -43,6 +43,7 @@
     "@prisma/client": "latest",
     "@types/passport-jwt": "^3.0.7",
     "apollo-server-core": "^3.10.3",
+    "bcrypt": "^5.1.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.13.2",
     "dotenv": "^16.0.3",

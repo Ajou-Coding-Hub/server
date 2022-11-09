@@ -6,6 +6,7 @@ import { UserService } from 'src/user/user.service';
 
 export interface LoginResponse {
   token: string;
+  refreshToken: string;
   profile: {
     email: string;
     name: string;
@@ -22,6 +23,16 @@ export class AuthService {
     private readonly userService: UserService,
   ) {}
 
+  async getRefreshToken(userId: number): Promise<string> {
+    return this.jwtService.sign(
+      { userId },
+      { secret: '1234refresh', expiresIn: '1w' },
+    );
+  }
+  async getToken(userId: number): Promise<string> {
+    return this.jwtService.sign({ userId });
+  }
+
   async login(accessToken: string): Promise<LoginResponse> {
     const { email, name, hd, picture } = await firstValueFrom(
       this.httpService
@@ -37,19 +48,18 @@ export class AuthService {
         ),
     );
     if (!hd.includes('ajou.ac.kr')) throw ForbiddenException;
+    let user = null;
     try {
-      const user = await this.userService.findOneByEmail(email);
-      return {
-        token: this.jwtService.sign({ userId: user.id }),
-        profile: { email, name, hd, picture },
-      };
+      user = await this.userService.findOneByEmail(email);
     } catch (e) {
-      const user = await this.userService.create({
+      user = await this.userService.create({
         email,
         name,
       });
+    } finally {
       return {
-        token: this.jwtService.sign({ userId: user.id }),
+        token: await this.getToken(user.id),
+        refreshToken: await this.getRefreshToken(user.id),
         profile: { email, name, hd, picture },
       };
     }
