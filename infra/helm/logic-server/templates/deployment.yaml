@@ -43,7 +43,7 @@ spec:
             - name: "MYSQL_DATABASE"
               value: {{ .Values.mysql.auth.database }}
             - name: "DATABASE_URL"
-              value: "mysql://$(MYSQL_ROOT_USER):$(MYSQL_ROOT_PASSWORD)@logic-server-mysql.ajou-coding-hub:3306/$(MYSQL_DATABASE_"
+              value: "mysql://$(MYSQL_ROOT_USER):$(MYSQL_ROOT_PASSWORD)@logic-server-mysql.ajou-coding-hub:3306/$(MYSQL_DATABASE)"
           ports:
             - name: http
               containerPort: 3000
