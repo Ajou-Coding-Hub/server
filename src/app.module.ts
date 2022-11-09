@@ -12,7 +12,7 @@ import { AppService } from './app.service';
       isGlobal: true,
       useFactory: () => ({
         prismaOptions: {
-          log: ['info', 'query'],
+          log: ['info', 'query', 'error', 'warn'],
         },
         explicitConnect: false,
       }),
