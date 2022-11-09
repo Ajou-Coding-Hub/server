@@ -47,7 +47,7 @@ export class AuthService {
           }),
         ),
     );
-    if (!hd.includes('ajou.ac.kr')) throw ForbiddenException;
+
     let user = null;
     try {
       user = await this.userService.findOneByEmail(email);
