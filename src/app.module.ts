@@ -7,7 +7,19 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 @Module({
-  imports: [PrismaModule.forRoot(), AuthModule, GuideModule],
+  imports: [
+    PrismaModule.forRootAsync({
+      isGlobal: true,
+      useFactory: () => ({
+        prismaOptions: {
+          log: ['info', 'query'],
+        },
+        explicitConnect: false,
+      }),
+    }),
+    AuthModule,
+    GuideModule
+  ],
   providers: [AppService, VscodeGateway],
   controllers: [AppController],
 })
