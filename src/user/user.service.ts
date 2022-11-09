@@ -25,7 +25,7 @@ export class UserService {
   }
 
   findOneByEmail(email: string) {
-    const user = this.prisma.user.findUnique({
+    const user = this.prisma.user.findUniqueOrThrow({
       where: { email },
     });
     return user;
