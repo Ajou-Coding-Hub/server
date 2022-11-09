@@ -56,12 +56,12 @@ export class AuthService {
         email,
         name,
       });
-    } finally {
-      return {
-        token: await this.getToken(user.id),
-        refreshToken: await this.getRefreshToken(user.id),
-        profile: { email, name, hd, picture },
-      };
     }
+
+    return {
+      token: await this.getToken(user.id),
+      refreshToken: await this.getRefreshToken(user.id),
+      profile: { email, name, hd, picture },
+    };
   }
 }
