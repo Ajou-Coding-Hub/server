@@ -14,7 +14,7 @@ mysql:
   auth:
     database: "ajou-coding-hub"
     createDatabase: true
-    existingSecret: ""
+    existingSecret: "db-secret"
 
 
 image:
