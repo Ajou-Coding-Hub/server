@@ -12,9 +12,9 @@ deployment:
 
 mysql:
   auth:
-    database: "ajou-coding-hub"
+    database: ajou-coding-hub
     createDatabase: true
-    existingSecret: "db-secret"
+    existingSecret: db-secret
 
 
 image:
