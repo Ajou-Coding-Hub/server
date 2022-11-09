@@ -5,7 +5,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { HttpModule } from '@nestjs/axios';
 import { UserModule } from 'src/user/user.module';
-import { PrismaModule } from 'nestjs-prisma';
 import { JwtRefreshStrategy } from './strategies/refresh.strategy';
 
 @Module({
@@ -18,7 +17,6 @@ import { JwtRefreshStrategy } from './strategies/refresh.strategy';
         },
       }),
     }),
-    PrismaModule,
     HttpModule,
     UserModule,
   ],
