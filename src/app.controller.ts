@@ -1,4 +1,4 @@
-import { Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {Controller, Get, Post, Query, UseGuards} from '@nestjs/common';
 import { AppService } from './app.service';
 import { JwtAuthGuard } from './auth/jwt.guard';
 
@@ -16,5 +16,11 @@ export class AppController {
   @Post('test')
   test(): string {
     return this.appService.getHello();
+  }
+
+
+  @Get('createWorkspace')
+  createWorkspace(@Query('workspaceName') workspaceName) {
+    return this.appService.createWorkspacePoc(workspaceName);
   }
 }

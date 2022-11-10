@@ -5,6 +5,7 @@ import { VscodeGateway } from './vscode/vscode.gateway';
 import { GuideModule } from './guide/guide.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ProjectModule } from './project/project.module';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { AppService } from './app.service';
       }),
     }),
     AuthModule,
-    GuideModule
+    GuideModule,
+    ProjectModule
   ],
   providers: [AppService, VscodeGateway],
   controllers: [AppController],
