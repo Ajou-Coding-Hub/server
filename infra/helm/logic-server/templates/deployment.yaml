@@ -20,6 +20,8 @@ spec:
       labels:
         {{- include "logic-server.selectorLabels" . | nindent 8 }}
     spec:
+      serviceAccountName: logic-server-account
+      automountServiceAccountToken: true
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
