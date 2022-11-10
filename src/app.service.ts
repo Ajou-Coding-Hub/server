@@ -81,17 +81,22 @@ export class AppService {
       },
     };
 
-    await k8sCoreApi.createNamespace({
-      metadata: {
-        name: namespaceName,
-        labels: {
-          'ajou.codes/type': 'workspace',
+    try {
+      await k8sCoreApi.createNamespace({
+        metadata: {
+          name: namespaceName,
+          labels: {
+            'ajou.codes/type': 'workspace',
+          },
         },
-      },
-    });
+      });
 
-    await k8sAppsApi.createNamespacedDeployment(namespaceName, deployment);
+      await k8sAppsApi.createNamespacedDeployment(namespaceName, deployment);
 
-    await k8sCoreApi.createNamespacedService(namespaceName, service);
+      await k8sCoreApi.createNamespacedService(namespaceName, service);
+    } catch (e) {
+      console.log(JSON.stringify(e));
+      throw e;
+    }
   }
 }
