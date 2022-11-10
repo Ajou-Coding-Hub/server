@@ -44,7 +44,7 @@ export class AppService {
       },
     };
     const deployment: V1Deployment = {
-      apiVersion: 'v1',
+      apiVersion: 'apps/v1',
       kind: 'Deployment',
       metadata: {
         name: 'code-server-deployment',
