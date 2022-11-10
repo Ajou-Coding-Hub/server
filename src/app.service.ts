@@ -6,7 +6,7 @@ import { V1Deployment } from '@kubernetes/client-node/dist/gen/model/v1Deploymen
 import { V1Namespace, V1Service } from '@kubernetes/client-node';
 
 const kc = new k8s.KubeConfig();
-kc.loadFromDefault();
+kc.loadFromCluster();
 
 const k8sCoreApi = kc.makeApiClient(k8s.CoreV1Api);
 const k8sAppsApi = kc.makeApiClient(k8s.AppsV1Api);
@@ -16,6 +16,10 @@ const k8sAppsApi = kc.makeApiClient(k8s.AppsV1Api);
 export class AppService {
   getHello(): string {
     return 'Hello World!';
+  }
+
+  async deleteWorkspace(workspaceName: string) {
+
   }
 
   async createWorkspacePoc(namespaceName: string) {
