@@ -17,10 +17,4 @@ export class AppController {
   test(): string {
     return this.appService.getHello();
   }
-
-
-  @Get('createWorkspace')
-  createWorkspace(@Query('workspaceName') workspaceName) {
-    return this.appService.createWorkspacePoc(workspaceName);
-  }
 }

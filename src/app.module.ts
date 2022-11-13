@@ -6,6 +6,7 @@ import { GuideModule } from './guide/guide.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ProjectModule } from './project/project.module';
+import { WorkspaceModule } from './workspace/workspace.module';
 
 @Module({
   imports: [
@@ -20,7 +21,8 @@ import { ProjectModule } from './project/project.module';
     }),
     AuthModule,
     GuideModule,
-    ProjectModule
+    ProjectModule,
+    WorkspaceModule
   ],
   providers: [AppService, VscodeGateway],
   controllers: [AppController],
