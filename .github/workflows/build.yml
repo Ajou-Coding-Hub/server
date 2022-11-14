@@ -78,10 +78,18 @@ jobs:
           [registry."registry.container-registry.svc.cluster.local:5000"]
             http = true
 
-    # Migrate
-    - uses: actions/setup-node@v3
+
+      # TODO: Replace with git pull job things?
+    - name: Build and push Docker Image - DB Migration
+      uses: docker/build-push-action@v3
       with:
-        node-version: 16
+        push: true
+        context: .
+        file: infra/docker/database-migrations.Dockerfile
+        tags: |
+          registry.container-registry.svc.cluster.local:5000/database-migrations:${{ steps.slug.outputs.sha7 }}
+        cache-from: type=registry,ref=registry.container-registry.svc.cluster.local:5000/database-migrations:buildcache
+        cache-to: type=registry,ref=registry.container-registry.svc.cluster.local:5000/database-migrations:buildcache,mode=max
 
 
     # Create & Push docker image
@@ -95,18 +103,6 @@ jobs:
           registry.container-registry.svc.cluster.local:5000/server:${{ steps.slug.outputs.sha7 }}
         cache-from: type=registry,ref=registry.container-registry.svc.cluster.local:5000/server:buildcache
         cache-to: type=registry,ref=registry.container-registry.svc.cluster.local:5000/server:buildcache,mode=max
-
-    # TODO: Replace with git pull things?
-    - name: Build and push Docker Image - DB Migration
-      uses: docker/build-push-action@v3
-      with:
-        push: true
-        context: .
-        file: infra/docker/database-migrations.Dockerfile
-        tags: |
-          registry.container-registry.svc.cluster.local:5000/database-migrations:${{ steps.slug.outputs.sha7 }}
-        cache-from: type=registry,ref=registry.container-registry.svc.cluster.local:5000/database-migrations:buildcache
-        cache-to: type=registry,ref=registry.container-registry.svc.cluster.local:5000/database-migrations:buildcache,mode=max
 
     - name: Deploy
       run: |
