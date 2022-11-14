@@ -6,4 +6,4 @@ RUN yarn global add prisma
 
 COPY prisma ./prisma/
 
-RUN yarn prisma migrate deploy
+RUN prisma migrate deploy
