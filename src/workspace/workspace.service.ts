@@ -18,15 +18,15 @@ const k8sAppsApi = kc.makeApiClient(k8s.AppsV1Api);
 export class WorkspaceService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getWorkspace() {
-    return this.prisma.workspace.findMany();
+  async getWorkspaces(ownerId: number) {
+    return this.prisma.workspace.findMany({ where: { ownerId: ownerId } });
   }
 
   async deleteWorkspace(workspaceName: string) {
     return this.prisma.workspace.delete({ where: { name: workspaceName } });
   }
 
-  async createWorkspacePoc(workspaceName: string) {
+  async createWorkspaceK8s(workspaceName: string) {
     const service: V1Service = {
       apiVersion: 'v1',
       kind: 'Service',
@@ -97,18 +97,22 @@ export class WorkspaceService {
 
       await k8sAppsApi.createNamespacedDeployment(workspaceName, deployment);
       await k8sCoreApi.createNamespacedService(workspaceName, service);
-
-      return this.prisma.workspace.create({
-        data: {
-          name: workspaceName,
-          description: '',
-          ownerId: 1,
-          status: WorkspaceStatus.STOPPED,
-        },
-      });
     } catch (e) {
       console.log(JSON.stringify(e));
       throw e;
     }
+  }
+
+  async createWorkspacePoc(ownerId: number, workspaceName: string) {
+    await this.prisma.workspace.create({
+      data: {
+        name: workspaceName,
+        description: '',
+        ownerId: ownerId,
+        status: WorkspaceStatus.STOPPED,
+      },
+    });
+
+    await this.createWorkspaceK8s(workspaceName);
   }
 }

@@ -34,6 +34,7 @@ model Workspace {
   owner       User            @relation(fields: [ownerId], references: [id])
   ownerId     Int
   status      WorkspaceStatus
+  createdAt   DateTime        @default(now())
 }
 
 model Project {
