@@ -96,12 +96,6 @@ jobs:
         cache-from: type=registry,ref=registry.container-registry.svc.cluster.local:5000/server:buildcache
         cache-to: type=registry,ref=registry.container-registry.svc.cluster.local:5000/server:buildcache,mode=max
 
-  deploy:
-    runs-on: k8s
-    
-    needs: build
-    
-    steps:
     # Deploy K8s
     - name: Deploy
       run: |
