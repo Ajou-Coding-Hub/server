@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 // POC AREA
 import * as k8s from '@kubernetes/client-node';
-import { V1Deployment } from '@kubernetes/client-node/dist/gen/model/v1Deployment';
-import { V1Namespace, V1Service } from '@kubernetes/client-node';
 import { PrismaService } from 'nestjs-prisma';
 import { WorkspaceStatus } from '@prisma/client';
 
@@ -22,11 +20,24 @@ export class WorkspaceService {
     return this.prisma.workspace.findMany({ where: { ownerId: ownerId } });
   }
 
-  async deleteWorkspace(workspaceName: string) {
-    return this.prisma.workspace.delete({ where: { name: workspaceName } });
+  async createWorkspace(ownerId: number, workspaceName: string) {
+    await this.prisma.workspace.create({
+      data: {
+        id: workspaceName,
+        description: '',
+        ownerId: ownerId,
+        status: WorkspaceStatus.STOPPED,
+      },
+    });
+
+    await this.createWorkspaceInstance(workspaceName);
   }
 
-  async createWorkspaceK8s(workspaceName: string) {
+  async deleteWorkspace(workspaceName: string) {
+    return this.prisma.workspace.delete({ where: { id: workspaceName } });
+  }
+
+  async createWorkspaceInstance(workspaceName: string) {
     try {
       const response = await k8sCoreApi.createNamespacedPod('ajou-coding-hub', {
         apiVersion: 'v1',
@@ -59,19 +70,6 @@ export class WorkspaceService {
       console.log(JSON.stringify(e));
       throw e;
     }
-  }
-
-  async createWorkspacePoc(ownerId: number, workspaceName: string) {
-    await this.prisma.workspace.create({
-      data: {
-        name: workspaceName,
-        description: '',
-        ownerId: ownerId,
-        status: WorkspaceStatus.STOPPED,
-      },
-    });
-
-    await this.createWorkspaceK8s(workspaceName);
   }
 
   async deleteWorkspacePVC(pvcName: string) {

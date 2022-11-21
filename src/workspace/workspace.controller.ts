@@ -14,6 +14,6 @@ export class WorkspaceController {
 
   @Post('/')
   createWorkspace(@Req() req, @Body() { name }: { name: string }) {
-    return this.workspaceService.createWorkspacePoc(req.user.id, name);
+    return this.workspaceService.createWorkspace(req.user.id, name);
   }
 }

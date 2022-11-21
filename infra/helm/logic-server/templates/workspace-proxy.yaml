@@ -1,0 +1,114 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ws-proxy
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    certmanager.k8s.io/acme-challenge-type: dns01
+    certmanager.k8s.io/acme-dns01-provider: route53
+    konghq.com/https-redirect-status-code: "308"
+    konghq.com/protocols: https
+    konghq.com/strip-path: "true"
+spec:
+  ingressClassName: kong
+  tls:
+    - secretName: workspace.ajou.codes
+      hosts:
+        - "*.workspace.ajou.codes"
+  rules:
+    - host: '*.workspace.ajou.codes'
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ws-proxy
+                port:
+                  number: 80
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-conf
+data:
+  nginx.conf: |
+    user  nginx;
+    worker_processes  1;
+    error_log  /var/log/nginx/error.log warn;
+    pid        /var/run/nginx.pid;
+    events {
+        worker_connections  1024;
+    }
+    http {
+      include       /etc/nginx/mime.types;
+      default_type  application/octet-stream;
+      log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                          '$status $body_bytes_sent "$http_referer" '
+                          '"$http_user_agent" "$http_x_forwarded_for"';
+      access_log  /var/log/nginx/access.log  main;
+      sendfile        on;
+      keepalive_timeout  65;
+
+      server {
+        listen 80;
+
+        server_name ~^(?<namespace>.*?)\.workspace\.;
+        resolver kube-dns.kube-system.svc.cluster.local valid=5s;
+
+        location /health-check {
+          return 200;
+        }
+
+        location / {
+          proxy_set_header Upgrade $http_upgrade;
+          proxy_set_header Connection "Upgrade";
+          proxy_pass http://code-server.$namespace.svc.cluster.local;
+          proxy_set_header Host $host;
+          proxy_http_version 1.1;
+        }
+      }
+    }
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: ws-proxy
+spec:
+  selector:
+    app: ws-proxy
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      name: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ws-proxy
+  labels:
+    app: ws-proxy
+spec:
+  selector:
+    matchLabels:
+      app: ws-proxy
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ws-proxy
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: nginx-conf

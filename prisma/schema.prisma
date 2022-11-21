@@ -10,9 +10,9 @@ datasource db {
 }
 
 model User {
-  id                  Int            @id @default(autoincrement())
-  email               String         @unique
-  name                String?
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String?
 
   Workspace           Workspace[]
   ownerGuide          Guide[]        @relation(name: "ownerGuide")
@@ -27,13 +27,24 @@ enum WorkspaceStatus {
 }
 
 model Workspace {
-  id          Int             @id @default(autoincrement())
-  name        String          @unique
+  id          String          @id
   description String
   owner       User            @relation(fields: [ownerId], references: [id])
   ownerId     Int
   status      WorkspaceStatus
   createdAt   DateTime        @default(now())
+
+  workspaceInstance WorkspaceInstance?
+}
+
+model WorkspaceInstance {
+  id          String          @id @default(uuid())
+  workspaceId String          @unique
+  workspace   Workspace       @relation(fields: [workspaceId], references: [id])
+  // TODO: Replace with own status types
+  status      WorkspaceStatus
+
+  createdAt DateTime @default(now())
 }
 
 model Guide {
