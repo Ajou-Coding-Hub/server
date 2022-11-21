@@ -25,8 +25,8 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: mysql-root-password
-                  name: { { .Values.mysql.auth.existingSecret } }
+                  name: {{ .Values.mysql.auth.existingSecret }}
             - name: "MYSQL_DATABASE"
-              value: { { .Values.mysql.auth.database } }
+              value: {{ .Values.mysql.auth.database }}
             - name: "DATABASE_URL"
               value: "mysql://$(MYSQL_ROOT_USER):$(MYSQL_ROOT_PASSWORD)@logic-server-mysql.ajou-coding-hub:3306/$(MYSQL_DATABASE)"
