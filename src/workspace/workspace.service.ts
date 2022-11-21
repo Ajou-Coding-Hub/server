@@ -27,76 +27,34 @@ export class WorkspaceService {
   }
 
   async createWorkspaceK8s(workspaceName: string) {
-    const service: V1Service = {
-      apiVersion: 'v1',
-      kind: 'Service',
-      metadata: {
-        name: 'code-server',
-      },
-      spec: {
-        selector: {
-          app: 'code-server',
-        },
-        ports: [
-          {
-            name: 'http',
-            port: 80,
-            targetPort: 'code-server',
-            protocol: 'TCP',
-          },
-        ],
-      },
-    };
-    const deployment: V1Deployment = {
-      apiVersion: 'apps/v1',
-      kind: 'Deployment',
-      metadata: {
-        name: 'code-server-deployment',
-      },
-      spec: {
-        replicas: 1,
-
-        selector: {
-          matchLabels: {
-            app: 'code-server',
-          },
-        },
-        template: {
-          metadata: {
-            labels: {
-              app: 'code-server',
-            },
-          },
-          spec: {
-            containers: [
-              {
-                name: 'code-server',
-                image: 'gitpod/openvscode-server',
-                ports: [
-                  {
-                    name: 'code-server',
-                    containerPort: 3000,
-                  },
-                ],
-              },
-            ],
-          },
-        },
-      },
-    };
-
     try {
-      await k8sCoreApi.createNamespace({
+      const response = await k8sCoreApi.createNamespacedPod('ajou-coding-hub', {
+        apiVersion: 'v1',
+        kind: 'Pod',
         metadata: {
           name: workspaceName,
           labels: {
-            'ajou.codes/type': 'workspace',
+            'ajou.codes/ownerId': '1',
           },
+        },
+        spec: {
+          containers: [
+            {
+              name: 'code-server',
+              image: 'gitpod/openvscode-server',
+              ports: [
+                {
+                  name: 'code-server',
+                  containerPort: 3000,
+                  hostPort: 80,
+                },
+              ],
+            },
+          ],
         },
       });
 
-      await k8sAppsApi.createNamespacedDeployment(workspaceName, deployment);
-      await k8sCoreApi.createNamespacedService(workspaceName, service);
+      return response;
     } catch (e) {
       console.log(JSON.stringify(e));
       throw e;
@@ -114,5 +72,9 @@ export class WorkspaceService {
     });
 
     await this.createWorkspaceK8s(workspaceName);
+  }
+
+  async deleteWorkspacePVC(pvcName: string) {
+    await k8sCoreApi.deleteNamespacedPersistentVolumeClaim(pvcName, '');
   }
 }
