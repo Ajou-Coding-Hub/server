@@ -5,7 +5,6 @@ import { VscodeGateway } from './vscode/vscode.gateway';
 import { GuideModule } from './guide/guide.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ProjectModule } from './project/project.module';
 import { WorkspaceModule } from './workspace/workspace.module';
 
 @Module({
@@ -21,8 +20,7 @@ import { WorkspaceModule } from './workspace/workspace.module';
     }),
     AuthModule,
     GuideModule,
-    ProjectModule,
-    WorkspaceModule
+    WorkspaceModule,
   ],
   providers: [AppService, VscodeGateway],
   controllers: [AppController],
