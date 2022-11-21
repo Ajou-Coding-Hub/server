@@ -79,19 +79,6 @@ jobs:
             http = true
 
 
-      # TODO: Replace with git pull job things?
-    - name: Build and push Docker Image - DB Migration
-      uses: docker/build-push-action@v3
-      with:
-        push: true
-        context: .
-        file: infra/docker/database-migrations.Dockerfile
-        tags: |
-          registry.container-registry.svc.cluster.local:5000/database-migrations:${{ steps.slug.outputs.sha7 }}
-        cache-from: type=registry,ref=registry.container-registry.svc.cluster.local:5000/database-migrations:buildcache
-        cache-to: type=registry,ref=registry.container-registry.svc.cluster.local:5000/database-migrations:buildcache,mode=max
-
-
     # Create & Push docker image
     - name: Build and push Docker Image - Server
       uses: docker/build-push-action@v3

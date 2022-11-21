@@ -15,7 +15,9 @@ spec:
       restartPolicy: Never
       containers:
         - name: db-migrations
-          image: "localhost:32000/database-migrations"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          command: ["yarn"]
+          args: ["run", "migrate:deploy"]
           env:
             - name: "MYSQL_ROOT_USER"
               value: root
