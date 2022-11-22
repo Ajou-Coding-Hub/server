@@ -39,12 +39,11 @@ export class WorkspaceService {
 
   async createWorkspaceInstance(workspaceName: string) {
     try {
-      const response = await k8sCoreApi.createNamespacedPod('ajou-coding-hub', {
+      const response = await k8sCoreApi.createNamespacedPod('workspace', {
         apiVersion: 'v1',
         kind: 'Pod',
         metadata: {
           name: workspaceName,
-          namespace: 'workspace',
           labels: {
             'ajou.codes/type': 'workspace',
             'ajou.codes/ownerId': '1',
