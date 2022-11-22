@@ -112,3 +112,47 @@ spec:
         - name: nginx-config
           configMap:
             name: nginx-conf
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: workspace
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: workspace
+  name: workspace-proxy-deployment
+  labels:
+    app: workspace-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: workspace-proxy
+  template:
+    metadata:
+      labels:
+        app: workspace-proxy
+    spec:
+      containers:
+        - name: workspace-proxy
+          image: localhost:32000/workspace-proxy:b707271
+          ports:
+            - name: http
+              containerPort: 8000
+              protocol: TCP
+---
+kind: Service
+apiVersion: v1
+metadata:
+  namespace: workspace
+  name: workspace-proxy
+spec:
+  selector:
+    app: workspace-proxy
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8000
