@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt.guard';
 import { WorkspaceService } from './workspace.service';
 
@@ -10,6 +19,11 @@ export class WorkspaceController {
   @Get('/')
   getWorkspaces(@Req() req) {
     return this.workspaceService.getWorkspaces(req.user.id);
+  }
+
+  @Delete('/:workspaceId')
+  deleteWorkspace(@Req() req, @Param('workspaceId') workspaceId: string) {
+    return this.workspaceService.deleteWorkspace(workspaceId);
   }
 
   @Post('/')
