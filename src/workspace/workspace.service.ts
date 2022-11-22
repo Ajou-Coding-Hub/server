@@ -44,7 +44,9 @@ export class WorkspaceService {
         kind: 'Pod',
         metadata: {
           name: workspaceName,
+          namespace: 'workspace',
           labels: {
+            'ajou.codes/type': 'workspace',
             'ajou.codes/ownerId': '1',
           },
         },
@@ -73,6 +75,6 @@ export class WorkspaceService {
   }
 
   async deleteWorkspacePVC(pvcName: string) {
-    await k8sCoreApi.deleteNamespacedPersistentVolumeClaim(pvcName, '');
+    await k8sCoreApi.deleteNamespacedPersistentVolumeClaim(pvcName, 'workspace');
   }
 }
