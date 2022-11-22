@@ -154,7 +154,7 @@ spec:
     spec:
       containers:
         - name: workspace-proxy
-          image: localhost:32000/workspace-proxy:0a87bda
+          image: localhost:32000/workspace-proxy:482eec3
           ports:
             - name: http
               containerPort: 8000
