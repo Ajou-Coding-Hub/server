@@ -49,6 +49,8 @@ export class WorkspaceService {
   }
 
   async deleteWorkspace(workspaceId: string) {
+    await k8sCoreApi.deleteNamespacedPod(workspaceId, 'workspace');
+
     return this.prisma.workspace.delete({ where: { id: workspaceId } });
   }
 
