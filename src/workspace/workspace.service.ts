@@ -12,6 +12,17 @@ const k8sCoreApi = kc.makeApiClient(k8s.CoreV1Api);
 const k8sAppsApi = kc.makeApiClient(k8s.AppsV1Api);
 //
 
+const generateRandomString = (num) => {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  const charactersLength = characters.length;
+  for (let i = 0; i < num; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+
+  return result;
+}
+
 @Injectable()
 export class WorkspaceService {
   constructor(private readonly prisma: PrismaService) {}
@@ -49,6 +60,7 @@ export class WorkspaceService {
         metadata: {
           name: workspaceName,
           labels: {
+            'ajou.codes/ownerToken': generateRandomString(32),
             'ajou.codes/type': 'workspace',
             'ajou.codes/ownerId': '1',
           },
