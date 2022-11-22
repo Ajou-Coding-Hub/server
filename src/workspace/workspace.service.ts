@@ -54,13 +54,6 @@ export class WorkspaceService {
             {
               name: 'code-server',
               image: 'gitpod/openvscode-server',
-              ports: [
-                {
-                  name: 'code-server',
-                  containerPort: 3000,
-                  hostPort: 80,
-                },
-              ],
             },
           ],
         },
