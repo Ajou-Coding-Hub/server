@@ -14,9 +14,11 @@ model User {
   email String  @unique
   name  String?
 
-  Workspace           Workspace[]
+  workspaces          Workspace[]
   ownerGuide          Guide[]        @relation(name: "ownerGuide")
   solvingGuideProblem GuideProblem[]
+  feedbacks           Feedback[]
+  feedbackLikes       FeedbackLike[]
 }
 
 enum WorkspaceStatus {
@@ -66,4 +68,22 @@ model GuideProblem {
 
   isSolved    Boolean
   solvingUser User[]
+}
+
+model Feedback {
+  id      Int    @id @default(autoincrement())
+  content String
+  ownerId Int
+  owner   User   @relation(fields: [ownerId], references: [id])
+
+  feedbackLikes FeedbackLike[]
+}
+
+model FeedbackLike {
+  likerId    Int
+  liker      User     @relation(fields: [likerId], references: [id])
+  feedbackId Int
+  feedback   Feedback @relation(fields: [feedbackId], references: [id])
+
+  @@unique([likerId, feedbackId])
 }
