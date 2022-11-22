@@ -16,6 +16,10 @@ const k8sAppsApi = kc.makeApiClient(k8s.AppsV1Api);
 export class WorkspaceService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async getWorkspace(workspaceId: string) {
+    return this.prisma.workspace.findUnique({ where: { id: workspaceId } });
+  }
+
   async getWorkspaces(ownerId: number) {
     return this.prisma.workspace.findMany({ where: { ownerId: ownerId } });
   }
@@ -33,8 +37,8 @@ export class WorkspaceService {
     await this.createWorkspaceInstance(workspaceName);
   }
 
-  async deleteWorkspace(workspaceName: string) {
-    return this.prisma.workspace.delete({ where: { id: workspaceName } });
+  async deleteWorkspace(workspaceId: string) {
+    return this.prisma.workspace.delete({ where: { id: workspaceId } });
   }
 
   async createWorkspaceInstance(workspaceName: string) {
@@ -67,6 +71,9 @@ export class WorkspaceService {
   }
 
   async deleteWorkspacePVC(pvcName: string) {
-    await k8sCoreApi.deleteNamespacedPersistentVolumeClaim(pvcName, 'workspace');
+    await k8sCoreApi.deleteNamespacedPersistentVolumeClaim(
+      pvcName,
+      'workspace',
+    );
   }
 }

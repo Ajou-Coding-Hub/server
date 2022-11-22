@@ -21,6 +21,11 @@ export class WorkspaceController {
     return this.workspaceService.getWorkspaces(req.user.id);
   }
 
+  @Get('/:workspaceId')
+  getWorkspace(@Req() req, @Param('workspaceId') workspaceId: string) {
+    return this.workspaceService.getWorkspace(workspaceId);
+  }
+
   @Delete('/:workspaceId')
   deleteWorkspace(@Req() req, @Param('workspaceId') workspaceId: string) {
     return this.workspaceService.deleteWorkspace(workspaceId);
