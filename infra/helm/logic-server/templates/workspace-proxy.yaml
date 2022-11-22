@@ -63,7 +63,7 @@ data:
         location / {
           proxy_set_header Upgrade $http_upgrade;
           proxy_set_header Connection "Upgrade";
-          proxy_set_header X-Workspace-Id $workspace_id
+          proxy_set_header X-Workspace-Id $workspace_id;
           proxy_pass http://workspace-proxy.workspace.svc.cluster.local;
           proxy_set_header Host $host;
           proxy_http_version 1.1;
