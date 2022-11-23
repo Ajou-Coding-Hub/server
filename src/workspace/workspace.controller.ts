@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt.guard';
 import { WorkspaceService } from './workspace.service';
+import { CreateWorkspaceDto } from './dto/create-workspace.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('workspace')
@@ -32,7 +33,7 @@ export class WorkspaceController {
   }
 
   @Post('/')
-  createWorkspace(@Req() req, @Body() { name }: { name: string }) {
+  createWorkspace(@Req() req, @Body() { name }: CreateWorkspaceDto) {
     return this.workspaceService.createWorkspace(req.user.id, name);
   }
 }
