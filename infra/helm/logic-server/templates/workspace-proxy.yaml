@@ -62,7 +62,7 @@ data:
       server {
         listen 80;
 
-        server_name ~^(?<workspace_port>[0-9]{2,5})-(?<workspace_id>.*?)\.workspace\.;
+        server_name ~^(?<workspace_port>[0-9]{2,5})-(?<workspace_id>[a-z0-9][0-9a-z\-]+)\.workspace\.;
         resolver kube-dns.kube-system.svc.cluster.local valid=5s;
 
         location / {
@@ -80,7 +80,7 @@ data:
       server {
         listen 80;
 
-        server_name ~^(?<workspace_id>.*?)\.workspace\.;
+        server_name ~^(?<workspace_id>[a-z0-9][0-9a-z\-]+)\.workspace\.;
         resolver kube-dns.kube-system.svc.cluster.local valid=5s;
 
         location / {
