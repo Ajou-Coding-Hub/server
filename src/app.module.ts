@@ -3,8 +3,6 @@ import { PrismaModule } from 'nestjs-prisma';
 import { AuthModule } from './auth/auth.module';
 import { VscodeGateway } from './vscode/vscode.gateway';
 import { GuideModule } from './guide/guide.module';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { WorkspaceModule } from './workspace/workspace.module';
 import { FeedbackModule } from './feedback/feedback.module';
 
@@ -24,7 +22,7 @@ import { FeedbackModule } from './feedback/feedback.module';
     WorkspaceModule,
     FeedbackModule,
   ],
-  providers: [AppService, VscodeGateway],
-  controllers: [AppController],
+  providers: [VscodeGateway],
+  controllers: [],
 })
 export class AppModule {}
