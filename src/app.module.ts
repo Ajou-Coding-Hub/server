@@ -5,6 +5,7 @@ import { VscodeGateway } from './vscode/vscode.gateway';
 import { GuideModule } from './guide/guide.module';
 import { WorkspaceModule } from './workspace/workspace.module';
 import { FeedbackModule } from './feedback/feedback.module';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [
@@ -23,6 +24,6 @@ import { FeedbackModule } from './feedback/feedback.module';
     FeedbackModule,
   ],
   providers: [VscodeGateway],
-  controllers: [],
+  controllers: [AppController],
 })
 export class AppModule {}
