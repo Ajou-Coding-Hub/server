@@ -20,17 +20,7 @@ export class UserController {
   }
 
   @Get('/github')
-  async getGithub(@Req() req) {
-    try {
-      return await this.userService.findOneByIdForGithub(req.user.id);
-    } catch (e) {
-      throw new HttpException(
-        {
-          status: HttpStatus.FORBIDDEN,
-          error: 'This is a custom message',
-        },
-        HttpStatus.FORBIDDEN,
-      );
-    }
+  getGithub(@Req() req) {
+    return this.userService.findOneByIdForGithub(req.user.id);
   }
 }
