@@ -1,5 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Github } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
@@ -24,9 +25,10 @@ export class AuthService {
     private readonly httpService: HttpService,
     private readonly userService: UserService,
     private readonly prisma: PrismaService,
+    private readonly config: ConfigService,
   ) {}
 
-  async getGithubAccessToken(userId: number, code: string): Promise<Github> {
+  async createGithubAccessToken(userId: number, code: string): Promise<Github> {
     try {
       const githubToken = await firstValueFrom(
         this.httpService
@@ -35,8 +37,8 @@ export class AuthService {
               Accecpt: 'application/json',
             },
             params: {
-              cient_id: '',
-              client_secret: '',
+              cient_id: this.config.get('GITHUB_OAUTH_CLIENT_ID'),
+              client_secret: this.config.get('GITHUB_OAUTH_CLIENT_SECRET'),
               code,
             },
           })

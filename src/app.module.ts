@@ -6,6 +6,8 @@ import { GuideModule } from './guide/guide.module';
 import { WorkspaceModule } from './workspace/workspace.module';
 import { FeedbackModule } from './feedback/feedback.module';
 import { AppController } from './app.controller';
+import { ConfigModule } from '@nestjs/config';
+import path from 'path';
 
 @Module({
   imports: [
@@ -22,6 +24,16 @@ import { AppController } from './app.controller';
     GuideModule,
     WorkspaceModule,
     FeedbackModule,
+    ConfigModule.forRoot({
+      envFilePath: path.resolve(
+        process.env.NODE_ENV === 'production'
+          ? '.production.env'
+          : process.env.NODE_ENV === 'stage'
+          ? '.stage.env'
+          : '.development.env',
+      ),
+      isGlobal: true,
+    }),
   ],
   providers: [VscodeGateway],
   controllers: [AppController],
