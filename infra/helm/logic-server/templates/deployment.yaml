@@ -40,13 +40,13 @@ spec:
             - name: "GITHUB_OAUTH_CLIENT_ID"
               valueFrom:
                 secretKeyRef:
-                  key: github-ouath-client
-                  name: id
+                  key: id
+                  name: github-ouath-client
             - name: "GITHUB_OAUTH_CLIENT_SECRET"
               valueFrom:
                 secretKeyRef:
-                  key: github-ouath-client
-                  name: secret
+                  key: secret
+                  name: github-ouath-client
             - name: "MYSQL_ROOT_USER"
               value: root
             - name: "MYSQL_ROOT_PASSWORD"
