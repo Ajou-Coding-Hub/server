@@ -34,26 +34,28 @@ export class AuthService {
         this.httpService
           .get('https://github.com/login/oauth/access_token', {
             headers: {
-              Accecpt: 'application/json',
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
             },
             params: {
-              cient_id: process.env.GITHUB_OAUTH_CLIENT_ID,
-              client_secret: process.env.GITHUB_OAUTH_CLIENT_SECRET,
+              client_id: process.env.GITHUB_OAUTH_CLIENT_ID,
+              client_secret: process.env.GITHUB_OAUTH_CLIENT_ID,
               code,
             },
           })
           .pipe(
             map(
-              ({ data }: { data: Record<'accessToken' | 'scope', string> }) =>
+              ({ data }: { data: Record<'access_token' | 'scope', string> }) =>
                 data,
             ),
           ),
       );
+      console.log(githubToken);
       const userData = await firstValueFrom(
         this.httpService
           .get('https://api.github.com/user', {
             headers: {
-              Authorization: `Bearer ${githubToken.accessToken}`,
+              Authorization: `Bearer ${githubToken.access_token}`,
             },
           })
           .pipe(
@@ -68,7 +70,7 @@ export class AuthService {
 
       const githubData = await this.prisma.github.create({
         data: {
-          accessToken: githubToken.accessToken,
+          accessToken: githubToken.access_token,
           scope: githubToken.scope,
           email: userData.email,
           username: userData.username,
@@ -81,13 +83,14 @@ export class AuthService {
     }
   }
 
-  async getRefreshToken(userId: number): Promise<string> {
+  async createRefreshToken(userId: number): Promise<string> {
     return this.jwtService.sign(
       { userId },
       { secret: '1234refresh', expiresIn: '1w' },
     );
   }
-  async getToken(userId: number): Promise<string> {
+
+  async createAccessToken(userId: number): Promise<string> {
     return this.jwtService.sign({ userId });
   }
 
@@ -117,8 +120,8 @@ export class AuthService {
     }
 
     return {
-      token: await this.getToken(user.id),
-      refreshToken: await this.getRefreshToken(user.id),
+      token: await this.createAccessToken(user.id),
+      refreshToken: await this.createRefreshToken(user.id),
       profile: { email, name, hd, picture },
     };
   }
