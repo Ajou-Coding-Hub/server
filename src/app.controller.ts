@@ -3,12 +3,7 @@ import { Controller, Get } from '@nestjs/common';
 @Controller()
 export class AppController {
   @Get('')
-  getHealthCheck(): string {
-    return 'OK';
-  }
-
-  @Get('env')
-  getEnv(): any {
+  getHealthCheck(): any {
     return process.env;
   }
 }
