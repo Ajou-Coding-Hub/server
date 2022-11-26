@@ -50,7 +50,6 @@ export class AuthService {
             ),
           ),
       );
-      console.log(githubToken);
       const userData = await firstValueFrom(
         this.httpService
           .get('https://api.github.com/user', {

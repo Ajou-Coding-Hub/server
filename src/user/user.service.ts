@@ -18,7 +18,7 @@ export class UserService {
   }
 
   findOne(id: number) {
-    const user = this.prisma.user.findUnique({
+    const user = this.prisma.user.findUniqueOrThrow({
       where: { id },
     });
     return user;
@@ -29,5 +29,12 @@ export class UserService {
       where: { email },
     });
     return user;
+  }
+
+  findOneByIdForGithub(id: number) {
+    const github = this.prisma.github.findUniqueOrThrow({
+      where: { userId: id },
+    });
+    return github;
   }
 }

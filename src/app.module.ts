@@ -7,6 +7,7 @@ import { WorkspaceModule } from './workspace/workspace.module';
 import { FeedbackModule } from './feedback/feedback.module';
 import { AppController } from './app.controller';
 import { ConfigModule } from '@nestjs/config';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ConfigModule } from '@nestjs/config';
       }),
     }),
     AuthModule,
+    UserModule,
     GuideModule,
     WorkspaceModule,
     FeedbackModule,
