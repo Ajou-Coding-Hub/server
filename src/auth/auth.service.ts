@@ -37,8 +37,8 @@ export class AuthService {
               Accecpt: 'application/json',
             },
             params: {
-              cient_id: this.config.get('GITHUB_OAUTH_CLIENT_ID'),
-              client_secret: this.config.get('GITHUB_OAUTH_CLIENT_SECRET'),
+              cient_id: process.env.GITHUB_OAUTH_CLIENT_ID,
+              client_secret: process.env.GITHUB_OAUTH_CLIENT_SECRET,
               code,
             },
           })

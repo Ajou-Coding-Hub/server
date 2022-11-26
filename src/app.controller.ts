@@ -6,4 +6,9 @@ export class AppController {
   getHealthCheck(): string {
     return 'OK';
   }
+
+  @Get('env')
+  getEnv(): any {
+    return process.env;
+  }
 }
