@@ -39,7 +39,7 @@ export class AuthService {
             },
             params: {
               client_id: process.env.GITHUB_OAUTH_CLIENT_ID,
-              client_secret: process.env.GITHUB_OAUTH_CLIENT_ID,
+              client_secret: process.env.GITHUB_OAUTH_CLIENT_SECRET,
               code,
             },
           })
@@ -50,6 +50,15 @@ export class AuthService {
             ),
           ),
       );
+
+      if (
+        (githubToken as Record<string, unknown>).hasOwnProperty(
+          'error_description',
+        )
+      ) {
+        throw githubToken;
+      }
+
       const userData = await firstValueFrom(
         this.httpService
           .get('https://api.github.com/user', {
@@ -67,14 +76,19 @@ export class AuthService {
           ),
       );
 
-      const githubData = await this.prisma.github.create({
-        data: {
-          accessToken: githubToken.access_token,
-          scope: githubToken.scope,
-          email: userData.email,
-          username: userData.username,
+      const payload = {
+        accessToken: githubToken.access_token,
+        scope: githubToken.scope,
+        email: userData.email,
+        username: userData.username,
+        userId,
+      };
+      const githubData = await this.prisma.github.upsert({
+        where: {
           userId,
         },
+        update: payload,
+        create: payload,
       });
       return githubData;
     } catch (e) {

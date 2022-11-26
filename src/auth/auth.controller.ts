@@ -19,7 +19,11 @@ export class AuthController {
     @Req() req,
     @Body() { code }: Record<'code', string>,
   ): Promise<Record<'accessToken', string>> {
-    return this.authService.createGithubAccessToken(req.user.id, code);
+    try {
+      return await this.authService.createGithubAccessToken(req.user.id, code);
+    } catch (e) {
+      throw e;
+    }
   }
 
   @UseGuards(JwtRefreshAuthGuard)

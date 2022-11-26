@@ -1,4 +1,11 @@
-import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt.guard';
 import { UserService } from './user.service';
 
@@ -13,7 +20,17 @@ export class UserController {
   }
 
   @Get('/github')
-  getGithub(@Req() req) {
-    return this.userService.findOneByIdForGithub(req.user.id);
+  async getGithub(@Req() req) {
+    try {
+      return await this.userService.findOneByIdForGithub(req.user.id);
+    } catch (e) {
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          error: 'This is a custom message',
+        },
+        HttpStatus.FORBIDDEN,
+      );
+    }
   }
 }
