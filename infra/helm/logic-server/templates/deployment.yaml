@@ -36,7 +36,17 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["yarn"]
           args: ["run", "start:prod"]
-          env:          
+          env:
+            - name: "GITHUB_OAUTH_CLIENT_ID"
+              valueFrom:
+                secretKeyRef:
+                  key: github-ouath-client
+                  name: GITHUB_OAUTH_CLIENT_ID
+            - name: "GITHUB_OAUTH_CLIENT_SECRET"
+              valueFrom:
+                secretKeyRef:
+                  key: github-ouath-client
+                  name: GITHUB_OAUTH_CLIENT_SECRET
             - name: "MYSQL_ROOT_USER"
               value: root
             - name: "MYSQL_ROOT_PASSWORD"
