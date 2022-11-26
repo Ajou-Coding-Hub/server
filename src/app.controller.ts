@@ -4,6 +4,9 @@ import { Controller, Get } from '@nestjs/common';
 export class AppController {
   @Get('')
   getHealthCheck(): any {
-    return process.env;
+    return {
+      GITHUB_OAUTH_CLIENT_ID: process.env.GITHUB_OAUTH_CLIENT_ID,
+      GITHUB_OAUTH_CLIENT_SECRET: process.env.GITHUB_OAUTH_CLIENT_SECRET,
+    };
   }
 }
