@@ -1,6 +1,6 @@
 import { Controller, Body, Post, UseGuards, Req } from '@nestjs/common';
 import { AuthService, LoginResponse } from './auth.service';
-import { JwtRefreshAuthGuard } from './jwt.guard';
+import { JwtAuthGuard, JwtRefreshAuthGuard } from './jwt.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -13,10 +13,19 @@ export class AuthController {
     return this.authService.login(accessToken);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Post('github')
+  async github(
+    @Req() req,
+    @Body() { code }: Record<'code', string>,
+  ): Promise<Record<'accessToken', string>> {
+    return this.authService.getGithubAccessToken(req.user.id, code);
+  }
+
   @UseGuards(JwtRefreshAuthGuard)
   @Post('refresh')
   async refresh(@Req() req): Promise<Record<'token', string>> {
-    const token = await this.authService.getToken(req.user.userId);
+    const token = await this.authService.getToken(req.user.id);
     return { token };
   }
 }

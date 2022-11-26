@@ -19,6 +19,17 @@ model User {
   solvingGuideProblem GuideProblem[]
   feedbacks           Feedback[]
   feedbackLikes       FeedbackLike[]
+  github              Github?
+}
+
+model Github {
+  id          Int    @id @default(autoincrement())
+  accessToken String
+  scope       String
+  email       String
+  username    String
+  user        User   @relation(references: [id], fields: [userId])
+  userId      Int    @unique
 }
 
 enum WorkspaceStatus {
