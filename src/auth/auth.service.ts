@@ -1,11 +1,9 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Github } from '@prisma/client';
 import { PrismaService } from 'nestjs-prisma';
 import { map, firstValueFrom } from 'rxjs';
-import { UserService } from 'src/user/user.service';
 
 export interface LoginResponse {
   token: string;
@@ -23,9 +21,7 @@ export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly httpService: HttpService,
-    private readonly userService: UserService,
     private readonly prisma: PrismaService,
-    private readonly config: ConfigService,
   ) {}
 
   async createGithubAccessToken(userId: number, code: string): Promise<Github> {
@@ -124,12 +120,23 @@ export class AuthService {
 
     let user = null;
     try {
-      user = await this.userService.findOneByEmail(email);
+      user = await this.prisma.user.update({
+        where: {
+          email,
+        },
+        data: {
+          email,
+          name,
+          picture,
+        },
+      });
     } catch (e) {
-      user = await this.userService.create({
-        email,
-        name,
-        picture,
+      user = await this.prisma.user.create({
+        data: {
+          email,
+          name,
+          picture,
+        },
       });
     }
 

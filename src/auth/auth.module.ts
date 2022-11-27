@@ -18,7 +18,6 @@ import { JwtRefreshStrategy } from './strategies/refresh.strategy';
       }),
     }),
     HttpModule,
-    UserModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, JwtRefreshStrategy],
