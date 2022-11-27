@@ -118,27 +118,21 @@ export class AuthService {
         ),
     );
 
-    let user = null;
-    try {
-      user = await this.prisma.user.update({
-        where: {
-          email,
-        },
-        data: {
-          email,
-          name,
-          picture,
-        },
-      });
-    } catch (e) {
-      user = await this.prisma.user.create({
-        data: {
-          email,
-          name,
-          picture,
-        },
-      });
-    }
+    const user = await this.prisma.user.upsert({
+      where: {
+        email,
+      },
+      update: {
+        email,
+        name,
+        picture,
+      },
+      create: {
+        email,
+        name,
+        picture,
+      },
+    });
 
     return {
       token: await this.createAccessToken(user.id),
