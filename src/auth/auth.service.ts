@@ -129,6 +129,7 @@ export class AuthService {
       user = await this.userService.create({
         email,
         name,
+        picture,
       });
     }
 
