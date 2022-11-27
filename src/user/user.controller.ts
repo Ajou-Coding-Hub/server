@@ -23,4 +23,9 @@ export class UserController {
   getGithub(@Req() req) {
     return this.userService.findOneByIdForGithub(req.user.id);
   }
+
+  @Get('/repositories')
+  getRepositories(@Req() req) {
+    return this.userService.getRepositories(req.user.id);
+  }
 }
