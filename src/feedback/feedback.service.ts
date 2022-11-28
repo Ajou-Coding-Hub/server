@@ -1,26 +1,36 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from 'nestjs-prisma';
 import { CreateFeedbackDto } from './dto/create-feedback.dto';
-import { UpdateFeedbackDto } from './dto/update-feedback.dto';
 
 @Injectable()
 export class FeedbackService {
-  create(createFeedbackDto: CreateFeedbackDto) {
-    return 'This action adds a new feedback';
+  constructor(private readonly prisma: PrismaService) {}
+
+  pagination(skip: number, take: number) {
+    return this.prisma.feedback.findMany({
+      skip,
+      take,
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
   }
 
-  findAll() {
-    return `This action returns all feedback`;
+  create(userId: number, createFeedbackDto: CreateFeedbackDto) {
+    return this.prisma.feedback.create({
+      data: {
+        ownerId: userId,
+        ...createFeedbackDto,
+      },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} feedback`;
-  }
-
-  update(id: number, updateFeedbackDto: UpdateFeedbackDto) {
-    return `This action updates a #${id} feedback`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} feedback`;
+  async like(userId: number, feedbackId: number) {
+    return this.prisma.feedbackLike.create({
+      data: {
+        feedbackId,
+        likerId: userId,
+      },
+    });
   }
 }
