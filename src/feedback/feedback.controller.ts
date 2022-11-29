@@ -29,7 +29,7 @@ export class FeedbackController {
 
   @UseGuards(JwtAuthGuard)
   @Post('like/:feedbackId')
-  like(@Req() req, @Param('id') feedbackId: number) {
+  like(@Req() req, @Param('feedbackId') feedbackId: number) {
     return this.feedbackService.like(req.user.id, feedbackId);
   }
 }

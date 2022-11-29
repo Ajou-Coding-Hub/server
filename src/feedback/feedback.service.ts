@@ -13,6 +13,10 @@ export class FeedbackService {
       orderBy: {
         createdAt: 'desc',
       },
+      include: {
+        owner: true,
+        feedbackLikes: true,
+      },
     });
   }
 
@@ -26,6 +30,25 @@ export class FeedbackService {
   }
 
   async like(userId: number, feedbackId: number) {
+    if (
+      await this.prisma.feedbackLike.findUnique({
+        where: {
+          likerId_feedbackId: {
+            feedbackId,
+            likerId: userId,
+          },
+        },
+      })
+    ) {
+      return this.prisma.feedbackLike.delete({
+        where: {
+          likerId_feedbackId: {
+            feedbackId,
+            likerId: userId,
+          },
+        },
+      });
+    }
     return this.prisma.feedbackLike.create({
       data: {
         feedbackId,
