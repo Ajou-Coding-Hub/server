@@ -6,16 +6,28 @@ import { CreateFeedbackDto } from './dto/create-feedback.dto';
 export class FeedbackService {
   constructor(private readonly prisma: PrismaService) {}
 
-  pagination(skip: number, take: number) {
+  pagination(skip: number, take: number, userId?: number) {
     return this.prisma.feedback.findMany({
       skip,
       take,
       orderBy: {
         createdAt: 'desc',
       },
-      include: {
+      select: {
+        _count: {
+          select: {
+            feedbackLikes: true,
+          },
+        },
+        id: true,
+        content: true,
+        createdAt: true,
         owner: true,
-        feedbackLikes: true,
+        feedbackLikes: {
+          where: {
+            likerId: userId,
+          },
+        },
       },
     });
   }
@@ -30,16 +42,15 @@ export class FeedbackService {
   }
 
   async like(userId: number, feedbackId: number) {
-    if (
-      await this.prisma.feedbackLike.findUnique({
-        where: {
-          likerId_feedbackId: {
-            feedbackId,
-            likerId: userId,
-          },
+    const isLike = await this.prisma.feedbackLike.findUnique({
+      where: {
+        likerId_feedbackId: {
+          feedbackId,
+          likerId: userId,
         },
-      })
-    ) {
+      },
+    });
+    if (isLike) {
       return this.prisma.feedbackLike.delete({
         where: {
           likerId_feedbackId: {

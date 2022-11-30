@@ -11,14 +11,30 @@ import {
 import { FeedbackService } from './feedback.service';
 import { CreateFeedbackDto } from './dto/create-feedback.dto';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('feedback')
 export class FeedbackController {
-  constructor(private readonly feedbackService: FeedbackService) {}
+  constructor(
+    private readonly feedbackService: FeedbackService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   @Get()
-  getFeedback(@Query('skip') skip: number, @Query('take') take: number) {
-    return this.feedbackService.pagination(skip, take);
+  getFeedback(
+    @Req() req,
+    @Query('skip') skip: number,
+    @Query('take') take: number,
+  ) {
+    let userId = undefined;
+    if (req.headers?.authorization) {
+      userId = (
+        this.jwtService.decode(
+          req.headers.authorization.split(' ')?.[1],
+        ) as Record<'userId', number>
+      ).userId;
+    }
+    return this.feedbackService.pagination(skip, take, userId);
   }
 
   @UseGuards(JwtAuthGuard)
