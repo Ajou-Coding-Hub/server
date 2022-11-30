@@ -6,10 +6,11 @@ import { CreateFeedbackDto } from './dto/create-feedback.dto';
 export class FeedbackService {
   constructor(private readonly prisma: PrismaService) {}
 
-  pagination(skip: number, take: number, userId?: number) {
+  pagination(cursor: number, userId?: number) {
     return this.prisma.feedback.findMany({
-      skip,
-      take,
+      skip: cursor > 0 ? 1 : 0,
+      take: 10,
+      ...(cursor && { cursor: { id: cursor } }),
       orderBy: {
         createdAt: 'desc',
       },

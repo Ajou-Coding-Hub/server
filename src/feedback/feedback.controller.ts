@@ -21,11 +21,7 @@ export class FeedbackController {
   ) {}
 
   @Get()
-  getFeedback(
-    @Req() req,
-    @Query('skip') skip: number,
-    @Query('take') take: number,
-  ) {
+  getFeedback(@Req() req, @Query('cursor') cursor: number) {
     let userId = undefined;
     if (req.headers?.authorization) {
       userId = (
@@ -34,7 +30,7 @@ export class FeedbackController {
         ) as Record<'userId', number>
       ).userId;
     }
-    return this.feedbackService.pagination(skip, take, userId);
+    return this.feedbackService.pagination(cursor, userId);
   }
 
   @UseGuards(JwtAuthGuard)
