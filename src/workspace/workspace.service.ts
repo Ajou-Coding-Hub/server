@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, HttpException, Injectable } from '@nestjs/common';
 
 // POC AREA
 import * as k8s from '@kubernetes/client-node';
@@ -13,7 +13,8 @@ const k8sAppsApi = kc.makeApiClient(k8s.AppsV1Api);
 //
 
 const generateRandomString = (num) => {
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const characters =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
   const charactersLength = characters.length;
   for (let i = 0; i < num; i++) {
@@ -21,7 +22,7 @@ const generateRandomString = (num) => {
   }
 
   return result;
-}
+};
 
 @Injectable()
 export class WorkspaceService {
@@ -36,6 +37,15 @@ export class WorkspaceService {
   }
 
   async createWorkspace(ownerId: number, workspaceName: string) {
+    const workspace = await this.prisma.workspace.findUnique({
+      where: {
+        id: workspaceName,
+      },
+    });
+    if (workspace) {
+      throw new ForbiddenException('이미 존재하는 워크스페이스입니다.');
+    }
+
     await this.prisma.workspace.create({
       data: {
         id: workspaceName,
